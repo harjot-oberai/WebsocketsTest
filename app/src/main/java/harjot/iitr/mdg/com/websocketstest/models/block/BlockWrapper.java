@@ -5,9 +5,9 @@ import com.google.gson.annotations.SerializedName;
 
 import harjot.iitr.mdg.com.websocketstest.models.ResponseModel;
 
-public class BlockWrapper extends ResponseModel{
+public class BlockWrapper extends ResponseModel {
 
-    @SerializedName("blockData")
+    @SerializedName("x")
     @Expose
     private BlockData blockData;
 

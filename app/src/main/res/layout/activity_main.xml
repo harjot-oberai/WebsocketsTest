@@ -16,4 +16,18 @@
         android:textSize="20sp"
         tools:text="Hello World!" />
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/blocks_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/connection_status_text"
+        android:visibility="gone" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/transactions_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/connection_status_text"
+        android:paddingTop="10dp" />
+
 </RelativeLayout>

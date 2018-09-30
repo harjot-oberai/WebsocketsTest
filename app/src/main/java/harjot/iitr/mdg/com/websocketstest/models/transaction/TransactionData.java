@@ -129,4 +129,12 @@ public class TransactionData {
         this.out = out;
     }
 
+    public int getCumulativeValue() {
+        int sum = 0;
+        for (Out singleOut : out) {
+            sum += singleOut.getValue();
+        }
+        return sum;
+    }
+
 }

@@ -7,7 +7,7 @@ import harjot.iitr.mdg.com.websocketstest.models.ResponseModel;
 
 public class TransactionWrapper extends ResponseModel{
 
-    @SerializedName("transactionData")
+    @SerializedName("x")
     @Expose
     private TransactionData transactionData;
 

@@ -2,12 +2,19 @@ package harjot.iitr.mdg.com.websocketstest;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.util.ArrayList;
+
+import harjot.iitr.mdg.com.websocketstest.adapters.BlocksAdapter;
+import harjot.iitr.mdg.com.websocketstest.adapters.TransactionsAdapter;
 import harjot.iitr.mdg.com.websocketstest.interfaces.BaseView;
 import harjot.iitr.mdg.com.websocketstest.listeners.CustomWebSocketListener;
 import harjot.iitr.mdg.com.websocketstest.models.ResponseModel;
@@ -34,6 +41,15 @@ public class MainActivity extends AppCompatActivity implements BaseView {
 
     private TextView connectionStatus;
 
+    private RecyclerView blocksRecycler;
+    private BlocksAdapter blocksAdapter;
+
+    private RecyclerView transactionsRecycler;
+    private TransactionsAdapter transactionsAdapter;
+
+    private ArrayList<BlockWrapper> blocks = new ArrayList<>();
+    private ArrayList<TransactionWrapper> transactions = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +65,22 @@ public class MainActivity extends AppCompatActivity implements BaseView {
                 .registerSubtype(BlockWrapper.class, "block");
 
         gson = new GsonBuilder().registerTypeAdapterFactory(typeAdapterFactory).create();
+
+        blocksRecycler = findViewById(R.id.blocks_recycler);
+        LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true); // newest block on top
+        blocksRecycler.setLayoutManager(llm);
+        blocksRecycler.setItemAnimator(new DefaultItemAnimator());
+
+        blocksAdapter = new BlocksAdapter(blocks);
+        blocksRecycler.setAdapter(blocksAdapter);
+
+        transactionsRecycler = findViewById(R.id.transactions_recycler);
+        LinearLayoutManager llm2 = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true); // newest transaction on top
+        transactionsRecycler.setLayoutManager(llm2);
+        transactionsRecycler.setItemAnimator(new DefaultItemAnimator());
+
+        transactionsAdapter = new TransactionsAdapter(transactions);
+        transactionsRecycler.setAdapter(transactionsAdapter);
 
     }
 
@@ -89,9 +121,27 @@ public class MainActivity extends AppCompatActivity implements BaseView {
 
         Log.d(TAG, text);
 
-//        ResponseModel responseModel = gson.fromJson(text, ResponseModel.class);
-//        Log.d(TAG, "OP : " + responseModel.getOp());
+        final ResponseModel responseModel = gson.fromJson(text, ResponseModel.class);
+        Log.d(TAG, "OP : " + responseModel.getOp());
 
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                if (responseModel instanceof BlockWrapper) {
+                    blocks.add((BlockWrapper) responseModel);
+                    blocksAdapter.notifyItemInserted(blocks.size() - 1);
+                } else if (responseModel instanceof TransactionWrapper) {
+                    if (Math.abs(((TransactionWrapper) responseModel).getTransactionData().getCumulativeValue() * 0.00000001) <= 0.002) {
+                        return;
+                    }
+                    transactions.add((TransactionWrapper) responseModel);
+                    transactionsAdapter.notifyItemInserted(transactions.size() - 1);
+                    transactionsRecycler.scrollToPosition(transactionsAdapter.getItemCount() - 1);
+                }
+
+            }
+        });
     }
 
     @Override
