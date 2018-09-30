@@ -10,6 +10,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import harjot.iitr.mdg.com.websocketstest.R;
+import harjot.iitr.mdg.com.websocketstest.models.bpi.BPIResponse;
 import harjot.iitr.mdg.com.websocketstest.models.transaction.TransactionData;
 import harjot.iitr.mdg.com.websocketstest.models.transaction.TransactionWrapper;
 
@@ -17,8 +18,14 @@ public class TransactionsAdapter extends RecyclerView.Adapter<TransactionsAdapte
 
     public ArrayList<TransactionWrapper> transactions;
 
+    private BPIResponse bpiResponse;
+
     public TransactionsAdapter(ArrayList<TransactionWrapper> transactions) {
         this.transactions = transactions;
+    }
+
+    public void setBpiResponse(BPIResponse bpiResponse) {
+        this.bpiResponse = bpiResponse;
     }
 
     @NonNull
@@ -35,8 +42,15 @@ public class TransactionsAdapter extends RecyclerView.Adapter<TransactionsAdapte
 
         TransactionData transactionData = transactions.get(i).getTransactionData();
 
-        transactionsViewHolder.transactionHash.setText(transactionData.getHash());
-        transactionsViewHolder.transactionAmount.setText(transactionData.getCumulativeValue() + "");
+        transactionsViewHolder.transactionHash.setText("Transaction Hash : " + transactionData.getHash());
+        transactionsViewHolder.transactionAmount.setText("Transaction Amount : " + transactionData.getCumulativeValue() + "");
+        if (bpiResponse != null) {
+            transactionsViewHolder.usdAmount.setVisibility(View.VISIBLE);
+            double bpi = Double.parseDouble(bpiResponse.getUsd().getLast());
+            transactionsViewHolder.usdAmount.setText("USD Amount : " + (bpi * transactionData.getCumulativeValue() * 0.00000001) + "$");
+        } else {
+            transactionsViewHolder.usdAmount.setVisibility(View.GONE);
+        }
 
     }
 
@@ -48,12 +62,13 @@ public class TransactionsAdapter extends RecyclerView.Adapter<TransactionsAdapte
 
     class TransactionsViewHolder extends RecyclerView.ViewHolder {
 
-        TextView transactionHash, transactionAmount;
+        TextView transactionHash, transactionAmount, usdAmount;
 
         public TransactionsViewHolder(@NonNull View itemView) {
             super(itemView);
             transactionHash = itemView.findViewById(R.id.transaction_hash);
             transactionAmount = itemView.findViewById(R.id.transaction_amount);
+            usdAmount = itemView.findViewById(R.id.usd_amount);
         }
     }
 

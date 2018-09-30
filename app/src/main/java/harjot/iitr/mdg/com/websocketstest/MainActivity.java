@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import harjot.iitr.mdg.com.websocketstest.adapters.BlocksAdapter;
@@ -24,9 +25,13 @@ import harjot.iitr.mdg.com.websocketstest.listeners.CustomWebSocketListener;
 import harjot.iitr.mdg.com.websocketstest.models.ResponseModel;
 import harjot.iitr.mdg.com.websocketstest.models.SubscriptionMessage;
 import harjot.iitr.mdg.com.websocketstest.models.block.BlockWrapper;
+import harjot.iitr.mdg.com.websocketstest.models.bpi.BPIResponse;
 import harjot.iitr.mdg.com.websocketstest.models.transaction.TransactionWrapper;
+import okhttp3.Call;
+import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.Response;
 import okhttp3.WebSocket;
 
 public class MainActivity extends AppCompatActivity implements BaseView {
@@ -38,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements BaseView {
     private final String WEB_SOCKET_URL = "wss://ws.blockchain.info/inv";
 
     private OkHttpClient okHttpClient;
+    private OkHttpClient okHttpBpiClient;
 
     private WebSocket webSocket;
 
@@ -54,6 +60,8 @@ public class MainActivity extends AppCompatActivity implements BaseView {
     private ArrayList<BlockWrapper> blocks = new ArrayList<>();
     private ArrayList<TransactionWrapper> transactions = new ArrayList<>();
 
+    private BPIResponse bpiResponse;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements BaseView {
         connectionStatus = findViewById(R.id.connection_status_text);
 
         okHttpClient = new OkHttpClient();
+        okHttpBpiClient = new OkHttpClient();
 
         RuntimeTypeAdapterFactory<ResponseModel> typeAdapterFactory = RuntimeTypeAdapterFactory
                 .of(ResponseModel.class, "op")
@@ -126,6 +135,31 @@ public class MainActivity extends AppCompatActivity implements BaseView {
         super.onResume();
         connectionStatus.setText("Connecting...");
         setupConnection();
+        getBPI();
+    }
+
+    private void getBPI() {
+        final Request request = new Request.Builder()
+                .url("https://blockchain.info/ticker")
+                .build();
+
+        okHttpBpiClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, final Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    throw new IOException("Unexpected code " + response);
+                } else {
+                    bpiResponse = gson.fromJson(response.body().string(), BPIResponse.class);
+                    transactionsAdapter.setBpiResponse(bpiResponse);
+                    Log.d(TAG, bpiResponse.getUsd().getLast());
+                }
+            }
+        });
     }
 
     private void setupConnection() {

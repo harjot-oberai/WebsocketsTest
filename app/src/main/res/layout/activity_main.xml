@@ -68,10 +68,10 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/blocks_recycler"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@id/button_wrapper"
-        android:visibility="gone"
-        android:paddingTop="10dp" />
+        android:paddingTop="10dp"
+        android:visibility="gone" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/transactions_recycler"

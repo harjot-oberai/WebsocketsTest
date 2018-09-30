@@ -25,6 +25,15 @@
         android:textSize="16sp"
         tools:text="Amount : 123efd" />
 
+    <TextView
+        android:id="@+id/usd_amount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingEnd="2dp"
+        android:paddingStart="2dp"
+        android:textSize="16sp"
+        tools:text="USD Amount : 123efd"  />
+
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
