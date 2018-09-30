@@ -1,11 +1,15 @@
 package harjot.iitr.mdg.com.websocketstest;
 
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -82,6 +86,39 @@ public class MainActivity extends AppCompatActivity implements BaseView {
         transactionsAdapter = new TransactionsAdapter(transactions);
         transactionsRecycler.setAdapter(transactionsAdapter);
 
+        setupSwitcher();
+
+    }
+
+    public void setupSwitcher() {
+        final Button transactionsButton = findViewById(R.id.transactions_button);
+        final Button blocksButton = findViewById(R.id.blocks_button);
+        transactionsButton.setBackgroundColor(ContextCompat.getColor(MainActivity.this, R.color.colorPrimary));
+        blocksButton.setBackgroundColor(Color.parseColor("#FFFFFF"));
+        transactionsButton.setTextColor(Color.parseColor("#FFFFFF"));
+        blocksButton.setTextColor(Color.parseColor("#000000"));
+        transactionsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                transactionsButton.setBackgroundColor(ContextCompat.getColor(MainActivity.this, R.color.colorPrimary));
+                blocksButton.setBackgroundColor(Color.parseColor("#FFFFFF"));
+                transactionsButton.setTextColor(Color.parseColor("#FFFFFF"));
+                blocksButton.setTextColor(Color.parseColor("#000000"));
+                blocksRecycler.setVisibility(View.GONE);
+                transactionsRecycler.setVisibility(View.VISIBLE);
+            }
+        });
+        blocksButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                blocksButton.setBackgroundColor(ContextCompat.getColor(MainActivity.this, R.color.colorPrimary));
+                transactionsButton.setBackgroundColor(Color.parseColor("#FFFFFF"));
+                blocksButton.setTextColor(Color.parseColor("#FFFFFF"));
+                transactionsButton.setTextColor(Color.parseColor("#000000"));
+                blocksRecycler.setVisibility(View.VISIBLE);
+                transactionsRecycler.setVisibility(View.GONE);
+            }
+        });
     }
 
     @Override
@@ -131,6 +168,7 @@ public class MainActivity extends AppCompatActivity implements BaseView {
                 if (responseModel instanceof BlockWrapper) {
                     blocks.add((BlockWrapper) responseModel);
                     blocksAdapter.notifyItemInserted(blocks.size() - 1);
+                    blocksRecycler.scrollToPosition(blocksAdapter.getItemCount() - 1);
                 } else if (responseModel instanceof TransactionWrapper) {
                     if (Math.abs(((TransactionWrapper) responseModel).getTransactionData().getCumulativeValue() * 0.00000001) <= 0.002) {
                         return;

@@ -16,18 +16,68 @@
         android:textSize="20sp"
         tools:text="Hello World!" />
 
+    <FrameLayout
+        android:id="@+id/button_wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/connection_status_text"
+        android:clipChildren="false">
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipChildren="false">
+
+            <Button
+                android:id="@+id/transactions_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginBottom="14dp"
+                android:layout_marginEnd="7dp"
+                android:layout_marginStart="14dp"
+                android:layout_marginTop="14dp"
+                android:layout_weight="1"
+                android:text="@string/transactions"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/blocks_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginBottom="14dp"
+                android:layout_marginEnd="14dp"
+                android:layout_marginStart="7dp"
+                android:layout_marginTop="14dp"
+                android:layout_weight="1"
+                android:text="@string/blocks"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_gravity="bottom"
+            android:background="#ededed" />
+
+    </FrameLayout>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/blocks_recycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/connection_status_text"
-        android:visibility="gone" />
+        android:layout_below="@id/button_wrapper"
+        android:visibility="gone"
+        android:paddingTop="10dp" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/transactions_recycler"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/connection_status_text"
+        android:layout_below="@id/button_wrapper"
         android:paddingTop="10dp" />
 
 </RelativeLayout>
