@@ -19,11 +19,13 @@ public class CustomWebSocketListener extends WebSocketListener {
     @Override
     public void onOpen(WebSocket webSocket, Response response) {
         super.onOpen(webSocket, response);
+        baseView.onConnectionOpen();
     }
 
     @Override
     public void onMessage(WebSocket webSocket, String text) {
         super.onMessage(webSocket, text);
+        baseView.onTextMessage(text);
     }
 
     @Override
@@ -34,11 +36,13 @@ public class CustomWebSocketListener extends WebSocketListener {
     @Override
     public void onClosing(WebSocket webSocket, int code, String reason) {
         super.onClosing(webSocket, code, reason);
+        baseView.onConnectionClosing();
     }
 
     @Override
     public void onClosed(WebSocket webSocket, int code, String reason) {
         super.onClosed(webSocket, code, reason);
+        baseView.onConnectionClosed();
     }
 
     @Override
